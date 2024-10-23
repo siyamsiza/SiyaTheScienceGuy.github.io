@@ -1,0 +1,491 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Hypothesis_Testing - SiyaTheDataScientist</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!-- Prism.js CSS for code syntax highlighting -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" rel="stylesheet" />
+
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" 
+		onload="renderMathInElement(document.body);"></script>
+		
+		 
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Main -->
+			<div id="main">
+				<div class="inner">
+
+					<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo"> </a>
+						<ul class="icons">
+							<li><a href="https://www.linkedin.com/in/siyabonga-msiza-07506616a/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+							<li><a href="https://github.com/siyamsiza/" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+							<li><a href="https://medium.com/@siyabester0477" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+						</ul>
+					</header>
+
+					<!-- Content -->
+					<section>
+						<header class="main">
+							<h1>Statistical Analysis: Hypothesis Testing</h1>
+						</header>
+
+						<hr class="major" />
+
+						<!-- Elements -->
+						<div class="row gtr-200">
+							<div class="col-12 col-12-medium">
+
+								<!-- Text content -->
+								<h3>Hypothesis Testing</h3>
+								<p>
+									<strong>Hypothesis testing</strong> is a statistical method used to make decisions or inferences about a population based on sample data.
+									It involves formulating two opposing hypotheses:
+								<ul>
+									<li><strong>Null Hypothesis \(H_0 \):</strong> This is a statement that there is no effect or no difference, and it serves as the default assumption.</li>
+									<li><strong>Alternative Hypothesis \(H_1 \text{ or } H_a \):</strong> This is the statement that contradicts the null hypothesis, suggesting there is an effect or a difference.</li>
+								</ul>
+								</p>
+
+								<h3>Steps for performing Hypothesis Testing</h3>
+								<ol>
+									<li><strong>Formulate the Hypotheses</strong>: Define both the null and alternative hypotheses.</li>
+									<li><strong>Choose a Significance Level (\(\alpha \))</strong>: Common choices are 0.05 or 0.01, representing a 5% or 1% of rejecting the null hypothesis when it's actually true (Type I error)</li>
+									<li><strong>Collect Data</strong>: Obtain a sample from the population.</li>
+									<li><strong>Calculate the Test Statistic</strong>: This is a value that summarizes the sample data. It could be a Z-score, T-score, or another measure depending on the test being used.</li>
+									<li><strong>Compare the Test Statistic to a Critical Value or P-Value</strong>: The critical value is determined by the significance level, and if the test statistic exceeds this value, the null hypothesis is rejected.
+										The p-value represents the probability of observing the data if the null hypothesis is true. If the p-value is smaller than the significance level, the null hypothesis is rejected.</li>
+									<li><strong>Make a Decision</strong>: Based on the comparison, either reject or fail to reject the null hypothesis.</li>
+								</ol>
+
+								<h3>Objective:</h3>
+								<p>
+									The goal of this project is to analyze whether there are significant differences in insurance charges based on specific factors within the dataset.
+									The following questions will be addressed through hypothesis testing:
+									<ol>
+										<li>Is there a significant difference between charges of smokers and non-smokers?</li>
+										<li>Is there a significant difference between charges for males and females?</li>
+										<li>Is there a significant difference between charges across different regions?</li>
+									</ol>
+								</p>
+
+								<h3>Data Preparation</h3>
+								<p>Download the dataset <a href="https://drive.google.com/file/d/1li-g8_H5nugux859tScxDelJUbdYSMQj/view?usp=drive_link" >here</a>.</p>
+
+								<h4>Import the Necessary Libraries</h4>
+								<pre><code class="language-python"># Importing the necessary packages/libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+%matplotlib inline
+sns.set()
+
+import warnings
+warnings.filterwarnings('ignore')  # Suppresses warnings from the libraries
+</code></pre>
+
+								<h4>Load and Explore the Data</h4>
+								<h4>First 5 rows of the dataset</h4>
+								<pre><code class="language-python"># Load the data into pandas DataFrame
+dataset = pd.read_csv('file path/insurance.csv')
+
+# Print the first five rows of the data
+dataset.head()
+</code></pre>
+							    <span class="image main"><img src="images2/HT_Head.png" alt=""></span>
+
+								<h4>Dataset Information</h4>
+								<pre><code class="language-python"># Dataset information on each attribute
+dataset.info()
+</code></pre>
+								<span class="image main"><img src="images2/HT_info.png" alt=""></span>
+
+								<h4>Checking for missing values</h4>
+								<pre><code class="language-python"># Checking for missing values
+dataset.isna().sum()
+</code></pre>
+								<span class="image main"><img src="images2/HT_missing_values.png" alt=""></span>
+								<p>There are no missing values in the dataset.</p>
+								<h4>Summary Statistics</h4>
+								<pre><code class="language-python">#Descriptive Statistics
+dataset.describe(include='all')
+</code></pre>
+                                <stan class="image main"><img src="images2/HT_Summary.png" alt=""></stan>
+								<p>
+									<ul>
+										<li>The age average seems fair for the society of avaerage adult people.</li>
+										<li>The bmi is symmetrical/normally distributed since the mean and the median values are approximately equal.</li>
+										<li>75% of the people/clients have 1 or 2 children.</li>
+										<li>The charges are highly skewed, which means there are extreme values.</li>
+									</ul>
+								</p>
+								<h3>Exploratory Data Analysis</h3>
+								<h4>Distribution Plots (Histograms & Boxplots)</h4>
+								<pre><code class="language-python">#Age, BMI, and Charges Histograms with kde Distributions
+plt.figure(figsize = (20, 25))
+
+#age kde distribution
+plt.subplot(3, 3, 1)
+sns.histplot(dataset['age'], kde = True, color = 'b', edgecolor = 'r')
+plt.title('Age Distribution')
+
+#bmi kde distribution
+plt.subplot(3, 3, 2)
+sns.histplot(dataset['bmi'], kde = True, color = 'r', edgecolor = 'b')
+plt.title('BMI Distribution')
+
+#charges kde distribution
+plt.subplot(3, 3, 3)
+sns.histplot(dataset['charges'], kde = True, color = 'g', edgecolor = 'r')
+plt.title("Charges Distribution")
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_histograms.png" alt="" ></span>
+								<p>
+									<ul>
+										<li>The Age Distribution does not have any outliers and is uniformly distributed as it should be.</li>
+										<li>The BMI is normally distributed as shown by the bell-curve shape.</li>
+										<li>The Charges are highly skewed to the right.</li>
+									</ul>
+								</p>
+								<pre><code class="language-python">plt.figure(figsize = (20, 25))
+
+#Age Boxplot
+plt.subplot(3, 3, 1)
+sns.boxplot(data = dataset, y = 'age', x='sex', hue='sex', palette='pastel')
+plt.title('Age Boxplot')
+
+#BMI Boxplot
+plt.subplot(3, 3, 2)
+sns.boxplot(data = dataset, y = 'bmi', x='sex', hue='sex', palette='coolwarm')
+plt.title('BMI Boxplot')
+
+#Charges Boxplot
+plt.subplot(3, 3, 3)
+sns.boxplot(data = dataset, y = 'charges', x='sex', hue='sex', palette='pastel')
+plt.title('Charges Boxplot')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Boxplots.png"></span>
+
+								<h4>Boxplot: Charges By Gender</h4>
+								<pre><code class="language-python">#plot the boxplot for charges with respect to gender
+sns.boxplot(y='charges', x='sex', hue='sex', data=dataset, palette='coolwarm')
+plt.title('Charges Distribution w.r.t Gender')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Boxplot_Charges_by_Gender.png"></span>
+								<h4>Boxplot: Charges By Smoking Status</h4>
+								<pre><code class="language-python">#plot the boxplot for charges with respect to gender
+sns.boxplot(y='charges', x='smoker', hue='smoker', data=dataset, palette='coolwarm')
+plt.title('Charges by Smoking Status')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Charges_By_Smoking.png"></span>
+								<h4>Boxplot: Charges By Region</h4>
+								<pre><code class="language-python">#plot the boxplot for charges with respect to gender
+sns.boxplot(y='charges', x='region', hue='region', data=dataset, palette='coolwarm')
+plt.title('Charges by Region')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Charges_by_Region.png"></span>
+								<h4>Categorical Attributes Distributions</h4>
+								<pre><code class="language-python">plt.figure( figsize =(20, 22))
+#Distribution of the Children column
+#dataset['children'].value_counts().plot(kind = 'bar')
+plt.subplot(4, 2, 1)
+sns.countplot(data = dataset, x = 'children',
+              hue='children', palette='pastel', 
+               legend=False)
+plt.xlabel("Number of Dependents")
+plt.ylabel("Quantity")
+plt.title("Children Distribution")
+
+#Visualizing the distribution of the smokers
+#dataset['smoker'].value_counts().plot(kind = 'bar')
+plt.subplot(4, 2, 2)
+sns.countplot(data = dataset, x = 'smoker', hue='smoker',
+              palette='coolwarm')
+plt.xlabel("Smoker")
+plt.ylabel("Count")
+plt.title("Distribution of smokers")
+
+#Visualizing the distribution of the regions
+plt.subplot(4, 2, 3)
+sns.countplot(data= dataset, x = 'region', 
+              hue='region', palette='coolwarm')
+plt.title('Distribution of the regions')
+#plt.xticks(rotation=90)
+
+#Visualizing the sex distribution
+plt.subplot(4, 2, 4)
+sns.countplot(data = dataset, x = "sex",
+              hue='sex', palette='pastel')
+plt.title("Gender Distribution")
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Barplots.png"></span>
+								<h4>Perform Label Encoding</h4>
+								<ul>
+									<li>Transforming categorical data into numerical values.</li>
+								</ul>
+								<pre><code class="language-python">#Perfoming label encoding because the correlation matrix and pairplot does not accept strings values
+from sklearn.preprocessing import LabelEncoder
+
+label_encoder = LabelEncoder()
+smoker = label_encoder.fit_transform(dataset.smoker)
+sex = label_encoder.fit_transform(dataset.sex)
+region = label_encoder.fit_transform(dataset.region)
+
+#Use a copy of the dataset and Append the encoded columns into the copied dataset
+encoded_data = copy.deepcopy(dataset)
+encoded_data = encoded_data.drop(columns = ['sex', 'smoker', 'region'], axis = 0)
+encoded_data['sex'] = sex
+encoded_data['smoker'] = smoker
+encoded_data['region'] = region
+
+#New encoded dataset
+encoded_data.head()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_encoded_data.png" alt="" ></span>
+								<h4>Correlation Matrix: Heatmap</h4>
+								<pre><code class="language-python">#Correlation Matrix
+corr_matrix = encoded_data.corr()
+sns.heatmap(corr_matrix, annot = True)
+plt.title("Heatmap showing the Correlation Matrix")
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Heatmap.png" alt="" ></span>
+								<h4>Pairplot</h4>
+								<pre><code class="language-python">#Pairplot w.r.t smokers
+sns.pairplot(encoded_data, hue='smoker')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Pairplot.png" alt="" ></span>
+								<h4>Scatterplot</h4>
+								<pre><code class="language-python">#Scatterplot for charges and age by smokers
+sns.scatterplot(data = dataset, x = 'age', y = 'charges', hue = 'smoker', palette = ['orange', 'green'])
+plt.title("Scatterplot Showing Charges vs. Age distribution w.r.t Smoker")
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images2/HT_Scatterplot.png" alt="" ></span>
+								<ul>
+									<li>Visually the significant difference between the charges of the smokers and the non-smokers is visible</li>
+								</ul>
+
+								<h3>Hypothesis Testing</h3>
+								<pre><code class="language-python">#import the required library
+import scipy.stats as stats
+								</code></pre>
+
+								<h4>Hypothesis Testing: Charges vs. Smoking Status</h4>
+
+								<pre><code class="language-python">#separate the data into smokers and non-smokers
+smokers = dataset[dataset['smoker'] == 'yes'].charges #Smokers charges
+non_smokers = dataset[dataset['smoker'] == 'no'].charges  #Non-smokers charges
+
+#Normality test (Shapiro-Wilk Test)
+smokers_test = stats.shapiro(smokers)
+non_smokers_test = stats.shapiro(non_smokers)
+
+#Performing the Hypothesis test
+if smokers_test[1]>0.05 and non_smokers_test[1] > 0.05:
+    print("The Data is Normally Distributed Use the Independent T-test:")
+    t_stat, p_value = stats.ttest_ind(smokers, non_smokers, axis = 0) #Independent t-test
+    print("\nT-Statistic: ", t_stat)
+    print("P-value: ", p_value)
+    print("\nOutcome of the Hypothesis Test:")
+    if p_value < 0.05: #Setting the significance level at 5%
+       print(f'Reject the null hypothesis. There is a significant difference in the mean charges between smokers and non-smokers.')
+    else:
+        print(f"Fail to reject the null hypothesis. There's a no significant difference between the mean charges of the smokers and non-smokers.")
+
+else:
+    print("The Data is Not Normally Distributed Use the Mann-Whitney U test:")
+    u_stat, p_value = stats.mannwhitneyu(smokers, non_smokers) #mann-whitney u test 
+    print("\nU-Statistic: ", u_stat)
+    print("P-value: ", p_value)
+    print("\nOutcome of the Hypothesis Test:")
+    if p_value < 0.05: #Setting the significance level at 5%
+       print(f'Reject the null hypothesis. There is a significant difference in the mean charges between smokers and non-smokers.')
+    else:
+        print(f"Fail to reject the null hypothesis. There's a no significant difference between the mean charges of the smokers and non-smokers.")
+								</code></pre>
+								<span class="image main"><img src="images2/test_1.png" alt=""></span>
+
+								<h4>Hypothesis Testing: Charges vs. Gender</h4>
+
+								<pre><code class="language-python">#separate the data into smokers and non-smokers
+males = dataset[dataset['sex'] == 'male'].charges #male charges
+females = dataset[dataset['sex'] == 'female'].charges  #female charges
+
+#Normality test (Shapiro-Wilk Test)
+males_test = stats.shapiro(males)
+females_test = stats.shapiro(females)
+
+#Perform Hypothesis Test
+if males_test[1]>0.05 and females_test[1] > 0.05:
+    print("The Data is Normally Distributed Use The Independent T-test:")
+    t_stat, p_value = stats.ttest_ind(males, females, axis = 0) #Independent t-test
+    print("\nT-Statistic: ", t_stat)
+    print("P-value: ", p_value)
+    print("\nOutcome of the Hypothesis Test:")
+    if p_value < 0.05: #Setting the significance level at 5%
+       print(f'Reject the null hypothesis. There is a significant difference in the mean charges between males and females.')
+    else:
+        print(f"Fail to reject the null hypothesis. There's a no significant difference between the mean charges of the males and females.")
+
+else:
+    print("The Data is Not Normally Distributed Use The Mann-Whitney U test:")
+    u_stat, p_value = stats.mannwhitneyu(males, females) #mann-whitney u test 
+    print("\nU-Statistic: ", u_stat)
+    print("P-value: ", p_value)
+    print("\nOutcome of the Hypothesis Test:")
+    if p_value < 0.05: #Setting the significance level at 5%
+       print(f'Reject the null hypothesis. There is a significant difference in the mean charges between males and females.')
+    else:
+        print(f"Fail to reject the null hypothesis. There's a no significant difference between the mean charges of males and females.")
+								</code></pre>
+								<span class="image main"><img src="images2/test_2.png" alt=""></span>
+
+								<h4>Hypothesis Testing: Charges vs. Region</h4>
+
+								<pre><code class="language-python">#split the data into different regions
+southeast = dataset[dataset['region']=='southeast'].charges
+southwest = dataset[dataset['region']=='southwest'].charges
+northeast = dataset[dataset['region']=='northeast'].charges
+northwest = dataset[dataset['region']=='northwest'].charges
+
+
+#Perform normality test using the shapiro-wilk test
+southeast_test = stats.shapiro(southeast)
+southwest_test = stats.shapiro(southwest)
+northeast_test = stats.shapiro(northeast)
+northwest_test = stats.shapiro(northwest)
+
+#Perform Hypothesis Test
+if (southeast_test[1]>0.05
+   and southwest_test[1]>0.05 
+   and northeast_test[1]>0.05 
+   and northwest_test[1]>0.05):
+    print("The Data is Normally Distributed Use The One-Way ANOVA Test:")
+    f_stat, p_value = stats.f_oneway(southeast, southwest, northeast, northwest)
+    print("\nF-Statistic: ", f_stat)
+    print("P-value: ", p_value)
+    print("\nOutcome of the Hypothesis Test:")
+    if p_value < 0.05: #Setting the significance level at 5%
+       print(f'Reject the null hypothesis. There is a significant difference in the mean charges among the regions.')
+    else:
+        print(f"Fail to reject the null hypothesis. There's a no significant difference between the mean charges among at least two regions.")
+
+
+else:
+    print("The Data is Not Normally Distributed Use The Kruskal-Wallis Test:")
+    h_stat, p_value = stats.kruskal(southeast, southwest, northeast, northwest)
+    print("\nH-statistic:", h_stat)
+    print("P-value: ", p_value)
+    print("\nOutcome of the Hypothesis Test:")
+    if p_value < 0.05: #Setting the significance level at 5%
+       print(f'Reject the null hypothesis. There is a significant difference in the mean charges among the regions.')
+    else:
+        print(f"Fail to reject the null hypothesis. There's a no significant difference between the mean charges among at least two regions.")
+								</code></pre>
+								<span class="image main"><img src="images2/test_3.png" alt=""></span>
+
+								<h3>Discussion</h3>
+								<p>The goal of this project was to determine whether there are significant differences in insurance charges based on three key factors: smoking status, gender, and region.
+								   Since the data was found to be not normally distributed, non-parametric tests were conducted to evaluate the hypotheses.
+								   Using the Mann-Whitney U test, a statistically significant difference in charges between smokers and non-smokers was observed with a p-value of approximately 5.27e-130, which is far below the commonly used significance threshold of 0.05.
+								   The result strongly indicates that smokers tend to incur significantly higher insurance charges compared to non-smokers. 
+								   This aligns with expectations, as smoking is a well-documented health risk factor, often leading to higher medical costs and, consequently, higher insurance charges.
+								</p>
+								<p>
+								   The Mann-Whitney U test was also employed to assess the difference in charges between males and females. 
+								   The test yielded a p-value of 0.7286, which is well above the 0.05 significance level. 
+								   This suggests that there is no statistically significant difference in the insurance charges between males and females in the dataset. 
+								   The result could indicate that both genders have similar risk profiles when it comes to the factors influencing insurance charges, or that other variables, such as age, BMI, and smoking status, play a more significant role in determining insurance premiums than gender alone.
+								</p>
+								<p>
+								   To investigate regional differences in insurance charges, the Kruskal-Wallis test was conducted.
+								   The p-value of 0.1923 indicates that there is no significant difference in charges across the four regions (southeast, southwest, northeast, and northwest). 
+								   This outcome suggests that insurance charges are relatively consistent across different geographic areas, possibly because insurance providers may not adjust premiums based solely on regional factors in this dataset.
+								   Alternatively, any differences in healthcare costs across regions might be balanced by other factors like smoking prevalence, age, or BMI.
+								</p>
+								<h3>Conclusion</h3>
+								<p>
+									In summary, the findings highlight the critical role that lifestyle factors, particularly smoking, play in determining insurance charges. 
+									On the other hand, gender and region seem to have a negligible impact on the cost of insurance in this case. 
+									These results can inform insurance companies about key risk factors, enabling more accurate risk assessments and pricing strategies. Future work could involve exploring interactions between variables, such as how the combination of smoking and BMI affects charges, or incorporating other external factors that might affect regional healthcare costs.
+								</p>
+							</div>
+						</div>
+					</section>
+
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div class="inner">
+
+					<!-- Search -->
+					<section id="search" class="alt">
+						<form method="post" action="#">
+							<input type="text" name="query" id="query" placeholder="Search" />
+						</form>
+					</section>
+
+					<!-- Menu -->
+					<nav id="menu">
+						<header class="major">
+							<h2>Menu</h2>
+						</header>
+						<ul>
+							<li><a href="index.html">Homepage</a></li>
+							<li><a href="aboutme.html">About Me</a></li>
+							<li><a href="projects.html">Projects</a></li>
+						</ul>
+					</nav>
+
+					<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; SiyaTheDataScienceGuy 2024. All rights reserved.</p>
+					</footer>
+
+				</div>
+			</div>
+
+		</div>
+
+		<!-- Prism.js Scripts -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<p class="copyright">&copy; SiyaTheDataScienceGuy. All rights reserved.</p>
+		</footer>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

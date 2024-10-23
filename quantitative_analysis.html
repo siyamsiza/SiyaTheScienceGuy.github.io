@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>quantitative_analysis - SiyaTheDataScientist</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+
+		<!-- Prism.js CSS for code syntax highlighting -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" rel="stylesheet" />
+
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" 
+		onload="renderMathInElement(document.body);"></script>
+
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"> </a>
+									<ul class="icons">
+										<li><a href="https://github.com/siyamsiza/" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+										<li><a href="https://www.linkedin.com/in/siyabonga-msiza-07506616a/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+										<li><a href="https://medium.com/@siyabester0477" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
+									</ul>
+								</header>
+
+							<!-- Content -->
+					<section>
+						<header class="main">
+							<h1>Quantitative Analysis</h1>
+						</header>
+
+						<hr class="major" />
+
+						<!-- Elements -->
+						<div class="row gtr-200">
+							<div class="col-12 col-12-medium">
+
+								<!-- Text content -->
+								<h3>Quantitative Analysis in Finance</h3>
+								<ul>
+									<li>Quantitative analysis in finance involves using mathematical models, statistics, and algorithms to evaluate financial data.</li>
+									<li>It helps in making decisions, managing risks, and predicting market trends.</li>
+									<li>Analysts often use historical price data, trading volumes, and financial metrics to develop models for portfolio optimization, algorithmic trading, asset pricing, and risk management.</li>
+								</ul>
+
+								<h3>Steps for performing QA</h3>
+								<ol>
+									<li>Set clear objectives and define the key questions to address</li>
+									<li>Determine the key performance indicators (KPIs) essential for the analysis.</li>
+									<li>Collect historical stock market data, including prices, trading volumes, and relevant financial metrics.</li>
+									<li>Clean and preprocess the data, addressing missing values, outliers, and any errors.</li>
+									<li>Perform exploratory analysis to uncover data distributions, patterns, and correlations.</li>
+									<li>Develop and implement strategies based on quantitative analysis models.</li>
+								</ol>
+
+								<h3>Objective Questions:</h3>
+								<ul>
+									<li>Which stock, between AAPL and MSFT, would be more suitable for a risk-averse investor based on its lower volatility and more stable price movements?</li>
+									<li>For an investor with a higher risk tolerance, which stock offers the greatest potential for high returns despite its higher volatility - TSLA, AAPL, or MSFT?</li>
+								</ul>
+
+								<h3>Data Preparation</h3>
+
+								<h4>Import Libraries</h4>
+								<pre><code class="language-python"># Importing the necessary packages/libraries
+import numpy as np
+import pandas as pd
+import yfinance as yf
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings('ignore')  # Suppresses warnings from the libraries
+								</code></pre>
+
+								<p>Numpy is used for numerical calculations and Pandas is used for data manipulation in Python. Yfinance is a Yahoo Finance API that is used to extract stock data in real-time. Matplotlib and Seaborn are used for Data Visualization. Lastly, the warnings library is used for alerting and suppressing warnings.</p>
+
+								<h4>Data Extraction</h4>
+								<pre><code class="language-python"># List of tickers
+tickers = ['AAPL', 'MSFT', 'TSLA']
+
+# Download the stock data
+data = yf.download(tickers=tickers, start='2023-01-01', end='2024-01-01', group_by='ticker')
+								</code></pre>
+								<p>The code above defines a list of tickers(AAPL, MSFT, & TSLA) and uses the Yahoo API to download the data from <code>2023-01-01</code> to <code>2024-01-01</code>, grouping the data by ticker.
+									<ul>
+										<li>AAPL - Apple Stock code</li>
+										<li>MSFT - Microsoft Stock code</li>
+										<li>TSLA - TESLA Stock code</li>
+									</ul>	
+								</p>
+
+								<h4>Data Collection</h4>
+								<pre><code class="language-python"># Initialize an empty dataframe
+stock_data = pd.DataFrame()
+
+# Create a for loop to loop through each ticker and add a 'ticker' column
+for ticker in tickers:
+    ticker_data = data[ticker].copy()  # Get data for each ticker
+    ticker_data['Ticker'] = ticker  # Add the ticker column
+    ticker_data = ticker_data.reset_index()  # Reset the index to get the date as a column
+    ticker_data['Date'] = ticker_data['Date'].dt.date  # Separate the date from the timestamp
+    stock_data = pd.concat([stock_data, ticker_data])  # Combine stock_data and ticker_data
+
+# Save the dataset as a CSV file (uncomment the code below)
+# stock_data.to_csv("stock_data.csv", index=False)
+
+# Display the first 5 rows of the dataset
+stock_data.head()
+								</code></pre>
+
+								<span class="image main"><img src="images/QA_Head.png" alt="" /></span>
+								<p>From the output above, ignore the first index column "price". The "Date" column needs to be converted to date type, and the data needs to be checked for missing values and duplicates.</p>
+
+							    <pre><code class="language-python">#Converting "Date" column to date type
+stock_data["Date"] = pd.to_datetime(stock_data["Date"])
+#Checking for missing values
+stock_data.isna().sum() 		
+							    </code></pre>
+
+								<span class="image main"><img src=images/QA_Missing_values.png alt="" /></span>
+								<p>There are no missing values in the dataset.</p>
+
+								<h3>Exploratory Data Analysis</h3>
+								<h4>Descriptive Statistics Analysis</h4>
+
+								<pre><code class="language-python">#Group the data by tickers
+descriptive_stats = stock_data.groupby('Ticker')['Close'].describe()
+descriptive_stats
+								</code></pre>
+								<span class="image main"><img src="images/QA_Summary_Stats1.png" alt="" /></span>
+
+								<h4><strong> Insights: Summary Statistics</strong></h4>
+
+								<p>
+									<strong>Mean (Average Closing Price):</strong>
+									<ul>
+										<li>Apple(AAPL): Average closing price around $172.55</li>
+										<li>Microsoft(MSFT): Average closing price around $313.95</li>
+										<li>Tesla(TSLA): Average closing price around $217.48</li>
+									</ul>
+								</p>
+								<p>
+									<Strong>Standard Deviation (Closing Price Volatility)</Strong>
+									<ul>
+										<li>Tesla (TSLA) and Microsoft (MSFT) shows the highest volatilities with standard deviations of $41.92 and $40.98 indicating larger price fluctuations compared to Apple.</li>
+										<li>Apple (AAPL) have more stable prices, with standard deviation of $17.33, respectively.</li>
+									</ul>
+								</p>
+								<p><strong>Range (Minimum & Maximum Closing Price)</strong>
+									<ul>
+										<li>Tesla's prices ranged from $108.122 to $293.34, reflecting significant movement.</li>
+										<li>Apple had a narrower range between $148.56 and $191.94, while Microsoft ranged from $222.31 to $382.70</li>
+									</ul>
+								</p>
+								<p><strong>Median (50% Quartile)</strong>
+									<ul>
+										<li>The median prices for AAPL and TSLA stocks distributions are skewed by a small margin which means their means are not close to the median.</li>
+										<li>Even though the median price for MSFT is far from its mean, there's a relatively symmetric distribution for Microsoft.</li>
+									</ul>
+									Overall, the summary statistics confirms that MSFT has the highest mean closing price at $313.95, followed by TSLA at $217.48 and AAPL at $172.55. 
+									The standard deviations also indicate that MSFT and TSLA exhibit higher volatility than AAPL, as seen in the wider spreads.
+								</p>
+								<h4>Distribution Plots</h4>
+								<pre><code class="language-python">#Closing price distribution per company
+sns.set()
+plt.figure(figsize=(8, 6))
+plt.subplot(1, 3, 1)
+sns.histplot(x='Close',kde=True, data=stock_data[stock_data['Ticker']=='AAPL'])
+plt.xlabel("APPL Closing Prices")
+plt.title("APPLE Close Distribution")
+
+plt.subplot(1, 3, 2)
+sns.histplot(x='Close',kde=True, data=stock_data[stock_data['Ticker']=='MSFT'], color='green')
+plt.xlabel("MSFT Closing Prices")
+plt.title("Microsoft Close Distribution")
+
+plt.subplot(1, 3, 3)
+sns.histplot(x='Close',kde=True, data=stock_data[stock_data['Ticker']=='TSLA'], color='r')
+plt.xlabel("TSLA Closing Prices")
+plt.title("TESLA Price Distribution")
+plt.tight_layout()
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/QA_histograms.png" alt=""/></span>
+
+								<h4><strong>Insights: Distribution Plots</strong></h4>
+								<p>
+									<ul>The distribution plots (Histogram with KDE) show that:
+										<li>AAPL's closing prices are more concentrated, forming a sharp peak aound the $175-$200 range, reflecting lower volatility. The distribution is slightly skewed to the left.</li>
+										<li>MSFT's prices are spread across a wider range with a clear peak around $325, but the distribution is more spread out than AAPL, indicating higher volatility.</li>
+										<li>TSLA has the most irregular distribution, with multiple peaks, indicating that its price has fluctuated significantly over time. The distribution is less smooth, reflecting its higher volatility and price unpredictability compared to AAPL and MSFT.</li>
+									</ul>
+								</p>
+								<h4>Boxplots For Outlier Detection</h4>
+								<pre><code class="language-python">#Boxplot to analyse the five number summary and detect outliers
+sns.boxplot(y='Close',x='Ticker', hue='Ticker', data=stock_data, palette='tab10')
+plt.ylabel('Closing Price($)')
+plt.xlabel('Ticker')
+plt.title('Boxplots Showing Closing Price Distributions w.r.t Tickers')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/QA_Boxplots.png" alt=""/></span>
+								<h4>Insights: Boxplots Distribution</h4>
+								<p>
+									The boxplots clearly depict the price range for each stock:
+									<ul>
+										<li>Microsoft (MSFT) has the highest closing price range, between $225 and $385 and there are no visible outliers, with a median around $325.</li>
+									    <li>Tesla (TSLA) follows, with a wider range from about $108 to $300 and similarly, does not show any outliers, and a median price around $222</li>
+									    <li>Apple (AAPL) shows the lowest price range, between $125 and $200, with a median of approximately $175. And does not display any visible outliers.</li>
+									</ul>
+									Overall, none of the stocks show visble outliers in this time period. AAPL and TSLA show slight left skewness, while MSFT appears more symmetric.
+									AAPL and TSLA also have means that are slightly lower than their medians, while MSFT has its mean and median closely aligned.
+								</p>
+							<h3>Time Series Analysis</h3>
+								<p>Time series analysis allows us to examine trends, seasonality, and patterns in stock price movements over time.
+								   We will conduct a time series analysis of the stock prices using key techniques like visualizing trends, differencing to check for stationarity, and autocorrelation.
+								</p>
+								<h4>Stock Price Visualization</h4>
+								<pre><code class="language-python"># Plot the stock price time series
+plt.figure(figsize=(10, 6))
+for ticker in tickers:
+   sns.lineplot(x='Date', y='Close', data=stock_data[stock_data['Ticker'] == ticker], label=ticker)
+
+plt.title('Stock Prices Over Time (AAPL, MSFT, TSLA)')
+plt.xlabel('Date')
+plt.ylabel('Price($)')
+plt.legend(title="tickers")
+plt.grid(True)
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/time_series_plot.png" alt=""/></span>
+								<h4>Insights: Stock Price Visualization</h4>
+								<p>The visualization shows the trends for Apple, Microsoft, and Tesla over the selected time period.
+								   From this, we can observe overall trends (e.g., upward, downward price movements) and major shifts in stock prices.
+									<ul>
+										<li><bold>Apple (AAPL) displays a steady rise without major fluctuations suggests low volatility. Apple seems a more stable investment.</li>
+										<li>Microsoft (MSFT) shows an impressive rise, indicating potential medium volatility but strong performance.
+											 Microsoft stands between risk-averse and risk-seeking, appealing to those seeking growth.</li>
+										<li>As for Tesla stock, there are high fluctuations throughout the year indicate high volatility. Tesla is a classic example of a risk-seeking investment—high risk, high reward.</li>
+									</ul>
+								</p>
+								<h4>Stationarity (Use ADF Test)</h4>
+								<p>To conduct more advanced time series analysis such as forecasting, we need to check if the stock prices are stationary (constant mean and variance).
+									We'll utilise the Augmented Dickey-Fuller (ADF) test to evaluate the stationarity of the stock prices.
+								</p>
+								<pre><code class="language-python">#import the adfuller function
+from statsmodels.tsa.stattools import adfuller
+
+# Define a function to perform ADF Test
+def adf_test(timeseries):
+    result = adfuller(timeseries, autolag='AIC')
+    print('ADF Statistic:', result[0])
+    print('p-value:', result[1])
+    if result[1] > 0.05:
+        print("The series is non-stationary")
+    else:
+        print("The series is stationary")
+
+# Perform ADF test for each stock adj close price
+for ticker in tickers:
+    print(f"\nADF Test for {ticker}:")
+    adf_test(stock_data[stock_data['Ticker']==ticker]['Close'])
+								</code></pre>
+								<span class="image main"><img src="images/QA_ADF_Test.png" alt="" /></span>
+								<h4>Insights: Augmented Dickey-Fuller Test</h4>
+								<p>
+									<ul>
+										<li>If the p-value is greater than 0.05, the stock price time series is non-stationary, meaning it has trends or seasonality.</li>
+										<li>Since all the time series are non-stationary meaning their mean and variance are not constant, transformation to stationarity will be required before modeling them for further analysis.</li>
+										<li>One common approach is to difference the series, which typically means to transform the data to represent the change from one period to the next rather than the absolute values(will not be covered in this project).</li>
+									</ul>
+								<div class="box">
+								</p>
+								<h4>Differencing The Non-Stationary Series for Modeling</h4>
+								<p>We'll use the differencing method which is defined as a technique used to make a time series stationary by removing its trend or seasonality.</p>
+								<pre><code class="language-python">#Differencing the closing prices of each stock in order to make the series stationary.
+stock_data['Diff_Close'] = stock_data.groupby('Ticker')['Close'].transform(lambda x: x.diff())
+
+for ticker in tickers:
+    series = stock_data[stock_data['Ticker']==ticker]['Diff_Close'].dropna()
+    print(f"\nADF Test for Differenced-{ticker}:")
+    adf_test(series)
+								</code></pre>
+								<span class="image main"><img src="images/QA_ADF_Test2.png" alt=""/></span>
+								<p>The series have been transformed into stationary series this step is crucial for applying certain time series models like ARIMA or VAR.
+								</p>
+								</div>
+								<h3>Rolling Mean and Variance</h3>
+								<p>Plotting the moving averages will helps us visually check for stationarity by comparing the rolling mean and standard deviation.</p>
+								<pre><code class="language-python"># Plot rolling mean and standard deviation for Tickers
+for ticker in tickers:
+    rolling_mean = stock_data[stock_data['Ticker']==ticker]['Close'].rolling(window=20).mean()
+    rolling_std = stock_data[stock_data['Ticker']==ticker]['Close'].rolling(window=20).std()
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(stock_data[stock_data['Ticker']==ticker]['Close'], label=f'{ticker} Stock Price')
+    plt.plot(rolling_mean, label='Rolling Mean', color='red')
+    plt.plot(rolling_std, label='Rolling Std Dev', color='green')
+    plt.title(f'{ticker} Stock Price with Rolling Mean and Std Deviation')
+    plt.legend()
+    plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/AAPL_Roll_Mean.png" alt=""/></span>
+								<span class="image main"><img src="images/MSFT_Roll_Mean.png" alt=""/></span>
+								<span class="image main"><img src="images/TSLA_Roll_Mean.png" alt=""/></span>
+								<h4>Insights: Rolling Mean and Variance</h4>
+								<p>
+									<ul>
+										<li>Both Microsoft (MSFT) and Apple (AAPL) stocks exhibit lower volatility, as seen by their lower rolling standard deviations. The smooth, steady increase in their rolling means suggests these stocks are more stable, making them attractive to risk-averse investors who prefer steady growth with fewer large price fluctuations.</li>
+										<li>Tesla (TSLA) shows higher volatility with large deviations in both stock price and rolling mean. The higher rolling standard deviation points to greater price unpredictability, which may offer higher returns but also comes with increased risk. This makes TSLA more suited for risk-seeking investors.</li>
+									</ul>
+									Overall, MSFT and AAPL are stable with predictable upward trends, while TSLA offers higher risk with potential for high rewards.
+								</p>
+							   <h3>Autocorrelation Plot (ACF)</h3>
+							   <p>Autocorrelation helps detect relationships between observations at different time lags.
+								We will use the Autocorrelation Function (ACF) to identify any repeated patterns.
+							   </p>
+							   <pre><code class="language-python">#Import the ACF library
+from statsmodels.graphics.tsaplots import plot_acf
+# Plot autocorrelation for tickers
+for ticker in tickers:
+    plot_acf(stock_data[stock_data['Ticker']==ticker]['Close'], lags=30)
+    plt.title('Autocorrelation of Tesla Stock Prices')
+    plt.show()
+							   </code></pre>
+							   <span class="image main"><img src="images/AAPL_ACF_Plot.png" alt="" /></span>
+							   <span class="image main"><img src="images/MSFT_ACF_Plot.png" alt="" /></span>
+							   <span class="image main"><img src="images/TSLA_ACF_Plot.png" alt="" /></span>
+							   <h4>Insights: Autocorrelation Function</h4>
+							   <p>
+								<ul>
+									<li>All three stocks exhibit positive autocorrelation over short lags, indicating trend-following behaviour in their prices.</li>
+									<li>The persistence seen in these plots (autocorrelation staying above zero for many lags) suggests that these stocks are likely part of a non-stationary process, where prices are influenced by past values.</li>
+									<li>These insights could help in short-term forecasting or identifying momentum in stock prices.</li>
+								</ul>
+							   </p>
+							   <h3>Volatility Analysis (Standard Deviation)</h3>
+							   <p>Volatility is often measured as the standard deviation of stock prices, representing how much the price fluctuates.
+								Higher volatility indicates more significant price swings, while lower volatility reflects more stable price movements.
+								We can calculate the standard deviation for each stock and visualize it using a bar graph.</p>
+								<pre><code class="language-python"># Calculate volatility (standard deviation) for each stock
+pivot_data = stock_data.pivot(index='Date', columns='Ticker', values='Close')
+volatility = pivot_data.std()
+
+# Plot the volatility using a bar graph
+plt.figure(figsize=(8, 6))
+volatility.plot(kind='bar', color='lightblue')
+plt.title('Volatility (Standard Deviation) of Stock Prices')
+plt.ylabel('Standard Deviation')
+plt.xlabel('Stocks')
+plt.grid(axis='y')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/QA_Volatility.png" alt="" /></span>
+								<h4>Insights: Volatility (Standard Deviation)</h4>
+								<p>
+									<ul>
+										<li>AAPL has the lowest volatility, suggesting that its stock price is relatively stable compared to the others.
+											This lower volatility indicates less drastic price changes, making it less risky.</li>
+										<li>Both MSFT and TSLA stocks have much higher volatility than AAPL, with TSLA being the most volatile.
+											The higher volatility for both stocks suggest that these stocks experience larger price fluctuations making them very risky but potentially offering higher returns.</li>
+									</ul>
+								</p>
+								<h3>Correlation Analysis (Correlation Matrix)</h3>
+								<p>Correlation analysis shows how the prices of different stocks are related to one another.
+									 A correlation matrix helps visualize these relationships between stocks,
+									  where values range from -1 (perfect negative correlation) to +1 (perfect positive correlation).
+									<ul>
+									   <li>High positive correlation (closer to +1): Stocks tend to move in the same direction.</li>
+									   <li>Negative correlation (closer to -1): Stocks tend to move in opposite directions.</li>
+									   <li>Low or no correlation (close to 0): Stocks move independently of each other.</li>
+									</ul>
+								</p>
+								<pre><code class="language-python"># Calculate the correlation matrix
+correlation_matrix = pivot_data.corr()
+
+# Plot the correlation matrix as a heatmap
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1)
+plt.title('Heatmap Showing Stock Price Correlation Matrix')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/QA_Heatmap_Corr.png" alt="" /></span>
+								<h4>Insights: Correlation Analysis</h4>
+								<p>
+									<ul>
+										<li>The correlation of 0.95 between Apple and Microsoft indicates an extremely strong positive relationship.
+											 This means that the stock prices of AAPL and MSFT tend to move in the same direction.</li>
+										<li>Apple and Tesla with a correlation of 0.83 also shows a strong positive relationship.
+											 This suggests that while AAPL and TSLA stock move in the same direction most of the time, their prices are slightly less synchronized.</li>
+										<li>The correlation of 0.75 between Tesla and Microsoft reflects a moderately strong positive correlation.
+											This means that while the prices of these two stocks tend to move in the same direction,their relationship is more variable compared to the others.
+										</li>
+									</ul>
+								</p>
+								<h3>Comparative Analysis</h3>
+								<p>We’ll compare the performance of different stocks based on their returns over the period.
+								   We’ll calculate the percentage change in closing prices from the start to the end of the period for each stock.
+								</p>
+								<pre><code class="language-python"># Calculating the percentage change in closing prices
+percentage_change = ((pivot_data.iloc[-1] - pivot_data.iloc[0]) / pivot_data.iloc[0]) * 100
+print(percentage_change)
+
+#Plot the percentage change in closing prices
+plt.figure(figsize=(8, 7))
+sns.barplot(x=percentage_change.index, y=percentage_change.values, palette='pastel')
+plt.ylabel('Percentage Change (%)')
+plt.title('Percentage Change in Closing Prices')
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/QA_Percentage1.png" alt="" /></span>
+								<h4>Insights: Comparative Analysis</h4>
+								<p>The bar graph shows the percentage change in the closing prices of the stocks from the start to the end of the observed period.
+									<ul>
+										<li>Tesla(TSLA) has the highest positive change of approximately 130%.</li>
+										<li>Apple(AAPL) exhibited a positive change of approximately 54%. It indicates a solid performance, though slightly lower than Microsoft(MSFT)’s with percentage change of approximately 57%</li>
+									</ul>
+								</p>
+								<h3>Daily Risk-Return Analysis</h3>
+								<p>To perform a Risk vs. Return Analysis, we will calculate the average daily return and the standard deviation of daily returns for each stock.
+									The standard deviation will serve as a proxy for risk, while the average daily return represents the expected return.
+								</p>
+								<pre><code class="language-python">#Calculate the daily returns
+daily_returns = pivot_data.pct_change().dropna()
+
+#Recalculating average daily return and standard deviation (risk)
+avg_daily_return = daily_returns.mean()
+risk = daily_returns.std()
+
+# Creating a DataFrame for plotting
+risk_return_df = pd.DataFrame({'Risk': risk, 'Average Daily Return': avg_daily_return, 'label':['AAPL','MSFT','TSLA']})
+
+#Plot a scatter plot for risk and return
+plt.figure(figsize=(8,7))
+sns.scatterplot(x=risk_return_df['Risk'], y=risk_return_df['Average Daily Return'], hue=risk_return_df['label'])
+plt.title("Daily Risk vs. Daily Return")
+plt.show()
+								</code></pre>
+								<span class="image main"><img src="images/QA_Risk_Return.png" alt="" /></span>
+								<h4>Insights: Risk-Return Analysis</h4>
+								<p>
+									<ul>
+										<li>AAPL and MSFT shows the lowest risk combined with a positive average daily return, suggesting a more stable investment with consistent returns.</li>
+										<li>TSLA has higher volatility and higher average daily return than AAPL and MSFT, indicating a high risk and highly rewarding investment during this period.</li>
+									</ul>
+								</p>
+								<h2>Discussion</h2>
+								<p>This quantitative analysis aimed to evaluate the stock closing prices for AAPL, MSFT, and TSLA using a variety of key performance indicators (KPIs).
+									We evaluated their performance through key metrics, including descriptive statistics, time series analysis, volatility, and risk-return dynamics, among others.
+									Based on these insights, we can draw conclusions about which stocks are more suited for risk-averse investors and which may appeal to those with higher risk appetite.
+									The findings provided valuable insights into the behaviour of each stock and their comparative performance.
+								</p>
+								<p>
+									For risk-averse investors, both AAPL and MSFT offer appealing options due to their stability and lower volatility.
+									The descriptive statistics showed that these stocks have more consistent price movements, indicating fewer extreme price swings.
+									Additionally, the distribution plots (histograms and boxplots) demonstrated that AAPL's closing price distribution is slightly left-skewed, with the majority of prices clustered between $150 and $200, and a peak around $175.
+									This suggests a relatively consistent performance, with fewer extreme values. Microsoft's (MSFT) distribution is almost symmetric, with the frequent closing prices centered around $325, demonstrating a balanced price movement with peaks around $300-$350.
+									Tesla's (TSLA) price distribution shows signs of left skewness, with the bulk of prices falling between $150 and $250 and a notable peak around $250. 
+								</p>
+								<p>
+									For risk-averse investors, both AAPL and MSFT emerge as favorable choices.
+									The rolling mean for both stocks follows a steady upward trend, with minimal deviations, indicating consistent long-term growth.
+									The rolling standard deviation remains low for both, highlighting their stability and lower volatility.
+									In particular, MSFT demonstrates a very stable price movement over time, as seen in its rolling mean, and has one of the lowest standard deviations among the three stocks.
+									Similarly, AAPL exhibits predictable, smooth growth with only minor fluctuations.
+									This makes both AAPL and MSFT suitable for investors seeking long-term appreciation without exposure to large swings in stock prices.
+									The time series analysis, distribution plots, and risk-return analysis further reinforce the notion that both stocks offer balanced, lower-risk investments, appealing to conservative investors who prioritize capital preservation.
+								</p>
+								<p>
+									On the other hand, TSLA stands out as the most volatile of the three stocks, making it more attractive to risk-seeking investors. 
+									The rolling mean for TSLA shows significant fluctuations throughout the period, indicating sharp price increases and decreases. 
+									This is further confirmed by the elevated rolling standard deviation, which peaks at multiple intervals, indicating greater unpredictability in TSLA's price behavior. 
+									Despite the higher risk, TSLA’s rapid recovery in stock price and the potential for substantial returns make it appealing to investors willing to take on more risk for higher rewards. 
+									The comparative analysis and volatility analysis further illustrate that TSLA has the highest percentage change in closing prices, reflecting both the risks and potential profits involved. 
+									For those investors with a high-risk tolerance, TSLA’s aggressive growth potential might offer the best opportunities for significant gains.
+								</p>
+								<h2>Conclusion</h2>
+								<p>
+									In conclusion, AAPL and MSFT are well-suited for risk-averse investors, offering stability and low volatility, while TSLA caters to risk-tolerant investors looking for high returns in a more volatile environment. Each stock aligns with different risk profiles, allowing investors to make informed decisions based on their individual risk appetites and investment goals.
+								</p>
+
+							</div>
+						</div>
+					</section>
+
+				</div>
+			</div>
+
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div class="inner">
+
+					<!-- Search -->
+					<section id="search" class="alt">
+						<form method="post" action="#">
+							<input type="text" name="query" id="query" placeholder="Search" />
+						</form>
+					</section>
+
+					<!-- Menu -->
+					<nav id="menu">
+						<header class="major">
+							<h2>Menu</h2>
+						</header>
+						<ul>
+							<li><a href="index.html">Homepage</a></li>
+							<li><a href="aboutme.html">About Me</a></li>
+							<li><a href="projects.html">Projects</a></li>
+						</ul>
+					</nav>
+
+					<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright">&copy; SiyaTheDataScienceGuy 2024. All rights reserved.</p>
+					</footer>
+
+				</div>
+			</div>
+
+		</div>
+
+		<!-- Prism.js Scripts -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script> 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script> 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+		<script>
+			// Initialize Highligh.js on page load
+			document.addEventListener('DOMContentLoaded', (event)=> {
+				document.querySelectorAll('precode').forEach((el)=> {
+					hljs.highlightElement(el);
+				});
+			});
+		</script>
+
+
+							<!-- Footer -->
+								<footer id="footer">
+									<p class="copyright">&copy; SiyaTheDataScienceGuy. All rights reserved.</p>
+								</footer>
+
+						</div>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
